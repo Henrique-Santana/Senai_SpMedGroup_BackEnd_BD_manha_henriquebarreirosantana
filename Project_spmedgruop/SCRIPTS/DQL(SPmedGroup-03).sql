@@ -1,4 +1,5 @@
 
+USE SPMedicalGruopManha;
 --Quantidade de usuários após realizar a importação do banco de dados.
 SELECT COUNT(*) AS TotalUsuarios FROM Usuario
 
@@ -7,7 +8,7 @@ SELECT CONVERT (VARCHAR(10),DataNascimento,110) AS [MM-DD-YYYY]
 FROM Paciente;
 
 --MOSTRAR OS NOMES DOS MEDICOS NAS CONSULTAS
-SELECT Nome AS Médico, Descricao, DataConsulta, TituloSituacao, IdPaciente FROM Usuario
+SELECT Nome AS Médico, Descricao, DataConsulta, TituloSituacao AS Situação, IdPaciente FROM Usuario
 INNER JOIN Medico ON Usuario.IdUsuario = Medico.IdUsuario
 INNER JOIN Consulta ON Consulta.IdMedico = Medico.IdMedico
 INNER JOIN Situacao ON Situacao.IdSituacao = Consulta.IdSituacao

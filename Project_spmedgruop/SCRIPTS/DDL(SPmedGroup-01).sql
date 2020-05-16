@@ -1,62 +1,95 @@
 CREATE DATABASE SPMedicalGruopManha;
+GO
 
 USE SPMedicalGruopManha;
+GO
 
 CREATE TABLE TipoUsuario(
-	IDTipoUsuario      INT PRIMARY KEY IDENTITY,
-	TituloTipoUsuario  VARCHAR (50) NOT NULL UNIQUE
+	IDTipoUsuario		INT PRIMARY KEY IDENTITY,
+	TituloTipoUsuario	VARCHAR (50) NOT NULL UNIQUE
 );
+GO
 
 CREATE TABLE Situacao(
-	IDSituacao       INT PRIMARY KEY IDENTITY,
-	TituloSituacao   VARCHAR(50) NOT NULL UNIQUE
+	IDSituacao		INT PRIMARY KEY IDENTITY,
+	TituloSituacao	VARCHAR(50) NOT NULL UNIQUE
 );
+GO
 
 CREATE TABLE Especialidade(
 	IDEspecialidade      INT PRIMARY KEY IDENTITY,
 	TituloEspecialidade  VARCHAR(50) NOT NULL UNIQUE
 );
+GO
+
+CREATE TABLE Cidade (
+	IDCidade		INT PRIMARY KEY IDENTITY,
+	TituloCidade	VARCHAR(50) NOT NULL UNIQUE 		
+);
+GO
+
+CREATE TABLE Estado (
+	IDEstado		INT PRIMARY KEY IDENTITY,
+	TituloEstado	VARCHAR(50) NOT NULL UNIQUE
+);
+GO
 
 CREATE TABLE Clinica(
-	IDClinica            INT PRIMARY KEY IDENTITY,
-	NomeFantasia         VARCHAR (100),
-	CNPJ                 CHAR(14) NOT NULL UNIQUE,
-	RazaoSocial          VARCHAR (50) NOT NULL,
-	EnderecoClinica      VARCHAR (50) NOT NULL UNIQUE,
-	HorarioFuncionamento VARCHAR (10)
+	IDClinica				INT PRIMARY KEY IDENTITY,
+	IDEstado				INT FOREIGN KEY REFERENCES Estado (IDEstado),
+	IDCidade				INT FOREIGN KEY REFERENCES Cidade (IDCidade),
+	NomeFantasia			VARCHAR (100),
+	CNPJ					CHAR	(14) NOT NULL UNIQUE,
+	RazaoSocial				VARCHAR (50) NOT NULL,
+	HorarioFuncionamento	VARCHAR (10),
+	Logradouro				VARCHAR (50) NOT NULL UNIQUE,
+	Bairro					VARCHAR (50) NOT NULL,
+	CEP						VARCHAR (10)	 NOT NULL UNIQUE
 );
+GO
 
 CREATE TABLE Usuario(
 	IDUsuario     INT PRIMARY KEY IDENTITY,
-	Nome          VARCHAR (50),
-	Email         VARCHAR (50),
-	Senha         VARCHAR (50),
 	IDTipoUsuario INT FOREIGN KEY REFERENCES TipoUsuario (IDTipoUsuario),
-	IDClinica     INT FOREIGN KEY REFERENCES Clinica (IDClinica)
+	IDClinica     INT FOREIGN KEY REFERENCES Clinica (IDClinica),
+	Email         VARCHAR (50),
+	Senha         VARCHAR (50)
+
 );
+GO
 
 CREATE TABLE Paciente (
-	IDPaciente       INT PRIMARY KEY IDENTITY,
-	RG               VARCHAR (50) NOT NULL UNIQUE,
-	CPF              VARCHAR (50) NOT NULL UNIQUE,
-	DataNascimento   DATETIME2 NOT NULL,
-	EnderecoPaciente VARCHAR (255) NOT NULL,
-	Telefone         VARCHAR (50), 
-	IDUsuario        INT FOREIGN KEY REFERENCES Usuario (IDUsuario)
+	IDPaciente			INT PRIMARY KEY IDENTITY,
+	IDUsuario			INT FOREIGN KEY REFERENCES Usuario (IDUsuario),
+	IDEstado			INT FOREIGN KEY REFERENCES Estado (IDEstado),
+	IDCidade			INT FOREIGN KEY REFERENCES Cidade (IDCidade),
+	Nome				VARCHAR (50) NOT NULL UNIQUE,
+	RG					VARCHAR (50) NOT NULL UNIQUE,
+	CPF					VARCHAR (50) NOT NULL UNIQUE,
+	DataNascimento		DATETIME2 NOT NULL,
+	Logradouro			VARCHAR (255) NOT NULL,
+	CEP					VARCHAR (10) NOT NULL,
+	Bairro				VARCHAR (50),
+	Telefone			VARCHAR (50)
 );
+GO
 
 CREATE TABLE Medico (
 	IDMedico        INT PRIMARY KEY IDENTITY,
-	CRM             VARCHAR(50) NOT NULL,
 	IDUsuario       INT FOREIGN KEY REFERENCES Usuario (IDUsuario),
-	IDEspecialidade INT FOREIGN KEY REFERENCES Especialidade (IDEspecialidade)
+	IDEspecialidade INT FOREIGN KEY REFERENCES Especialidade (IDEspecialidade),
+	Nome            VARCHAR(50) NOT NULL UNIQUE,
+	CRM             VARCHAR(50) NOT NULL
 );
+GO
 
 CREATE TABLE Consulta (
 	IDConsulta   INT PRIMARY KEY IDENTITY,
-	DataConsulta VARCHAR (30) NOT NULL,
-	Descricao    VARCHAR (255),
 	IDMedico     INT FOREIGN KEY REFERENCES Medico (IDMedico),
 	IDPaciente   INT FOREIGN KEY REFERENCES Paciente (IDPaciente),
-	IDSituacao   INT FOREIGN KEY REFERENCES Situacao (IDSituacao)
+	IDClinica	 INT FOREIGN KEY REFERENCES Clinica (IDClinica),
+	IDSituacao   INT FOREIGN KEY REFERENCES Situacao (IDSituacao),
+	DataConsulta VARCHAR (30) NOT NULL,
+	Descricao    VARCHAR (255)
 );
+GO
